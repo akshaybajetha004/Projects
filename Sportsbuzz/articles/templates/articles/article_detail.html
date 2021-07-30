@@ -1,0 +1,127 @@
+{% extends 'users/../../../articles/templates/articles/base.html' %}
+{% block content %}
+<!-- Main Content-->
+
+    <section id="heading" style="margin-top: 109px;">
+        <div class="container">
+            <div class="row">
+                <div class="upper-section">
+                    <h1 id="heading" class="title" style="color: #333;font-weight: 400;font-size: 45px;
+                        line-height: 57px;text-align: center;margin-bottom: 2rem; width: 100%;">{{ article_id.heading }}</h1>
+                    <img src="{{ article_id.img_url }}" alt="img here" style="width: 1115px;height: 592px">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+<main class="mb-4">
+    <div class="container px-4">
+        <div class="row  justify-content">
+            <div class="col-md-6">
+                {% for i in body  %}
+                    {% if i.0 == '"' and i|last == '"'%}
+                        <blockquote class="custom-blackquote">{{ i }}</blockquote>
+                    {% else %}
+                        <p>{{ i }}</p>
+                    {% endif %}
+                {% endfor %}
+
+
+                <h2>Comments...</h2>
+                    {% if not article_id.article_detail_id.comments.all %}
+                        No Comments...
+                    {% else %}
+
+                        {% for comment in article_id.article_detail_id.comments.all %}
+                            <br>
+
+                            <div style="border-left: 6px solid black;
+                            background-color: white;
+                            border-radius: 5px"}>
+                            <hr>
+                                <div class="ml-3" style="margin-bottom:12px">
+                                        <u style="font-weight: bold">{{ comment.name }}</u>
+                                    <small>
+                                        {{ comment.whenpublished }}
+                                        </small>
+                                </div>
+
+{#                            <div class="">#}
+                                <div class="ml-3">
+                                    {{ comment.body }}
+                                    <hr>
+                                </div>
+                            </div>
+{#                            </div>#}
+                        {% endfor %}
+                    {% endif %}
+                <strong>
+                    <h6>{{ comment.name }}</h6>
+                    <small>{{ comment.date_added }}</small>
+                </strong>
+{#                            <div class="">#}
+                <p>{{ comment.body }}</p>
+
+
+
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'add-comment' article_id.article_detail_id.article_id %}" class="mt-5">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <img class="rounded-circle" src="{{ request.user.profile.image.url }}" alt="" style="margin-top: 6px;height: 45px; width: 45px;">
+                        {{ form.body }}
+                    </div>
+                    <button class="btn btn-primary btn-sm"style="margin-top: 11px;" type="submit">Add</button>
+                </form>
+                {% endif %}</div>
+            <div class="col-md-6 ">
+                <p style="color: grey">
+                    Posted on {{ article_id.date_posted }}
+                </p>
+                {% if user.is_authenticated %}
+                <form action="{% url 'like_article' article_id.article_detail_id.article_id %}" method="POST" style="margin: 2rem 0;">
+                    {% csrf_token %}
+                        {% if liked %}
+                            <button type="submit", name="post_id", value="{{ article_id.article_detail_id.article_id }}",
+                                class="btn btn-danger btn-sm mr-2"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Unlike
+                            </button>
+                        {% else %}
+                            <button type="submit", name="post_id", value="{{ article_id.article_detail_id.article_id }}",
+                                class="btn btn-primary btn-sm mr-2"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Like
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <button class="btn btn-primary btn-sm mr-2"><i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                        <a href="{% url 'login' %}">LOGIN</a>
+
+                        </button>
+                    {% endif %}
+                        {% if total_likes > 0 %}
+                            {{ total_likes }}
+                        {% endif %}
+                </form>
+
+            <div class="fb-share-button mb-4" data-href="https://sport-buzz.herokuapp.com/article-detail/{{ article_id.article_detail_id.article_id }}/" data-layout="button_count" data-size="large"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A8000%2Farticle-detail%2F856383%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
+
+{#                {% if len_tweets > 0 %}#}
+{#                    {% for i in tweets %}#}
+{#                        <iframe src="{{ i }}" style="width: 100%;height :500px; margin-bottom:10px "></iframe>#}
+{#                    {% endfor %}#}
+{#                {% endif %}#}
+
+                       <div class="owl-carousel owl-theme">
+                           {% if len_tweets > 0 %}
+                               {% for i in tweets %}
+                                   <div class="item">
+                                       <iframe scrolling="no" src="{{ i }}" style="width: 100%;height :1000px; margin-bottom:10px "></iframe>
+                                   </div>
+                               {% endfor %}
+                           {% endif %}
+                       </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

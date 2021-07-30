@@ -1,0 +1,10 @@
+[run]
+omit=
+    */venv/*
+    */tests/*
+    */migrations/*
+    */staticfiles/*
+    */management/*
+    */scrape_main.py
+    */cron.py
+    */__init__.py
